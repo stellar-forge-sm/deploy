@@ -1,0 +1,25 @@
+name: Stellar Forge Actions Library
+description: CD Library for Stellar Forge Actions
+author: Stellar Forge Team
+
+inputs:
+  github-token:
+    description: 'GitHub Token for authentication'
+    required: false
+    default: ''
+  projectId:
+    description: 'ID of the project'
+    required: true
+    default: ''
+
+outputs:
+  release-url:
+    description: 'URL of the created release'
+runs:
+  using: 'composite'
+  steps:
+    - name: Header
+      run: |
+        echo "=================================="
+        echo "  Stellar Forge Actions Library  "
+        echo "=================================="
