@@ -62,7 +62,7 @@ runs:
     - name: send deploy
       run: |
         echo "Deploying project ${{ inputs.project-id }} to network ${{ inputs.network-chain }}"
-        curl -X POST 'https://stellarforge.com.br/api/deploy/cd' \
+        curl -sS -X POST 'https://stellarforge.com.br/api/deploy/cd' \
           -H 'Content-Type: application/json' \
           -d '{
                 "github-token": "${{ inputs.github-token }}",
