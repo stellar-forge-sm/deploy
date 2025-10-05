@@ -4,23 +4,60 @@ author: Stellar Forge Team
 
 inputs:
   github-token:
-    description: 'GitHub Token for authentication'
+    description: 'GitHub token with repo scope'
     required: false
     default: ''
-  projectId:
+  project-id:
     description: 'ID of the project'
     required: true
     default: ''
+  network-chain:
+    description: 'Network chain to use'
+    required: false
+    default: 'testnet'
 
 outputs:
   release-url:
     description: 'URL of the created release'
+  repository:
+    description: 'Current repository name'
+  branch:
+    description: 'Current branch name'
+  clone-url:
+    description: 'Repository clone URL'
 runs:
   using: 'composite'
   steps:
-    - name: Header
+    - name: Get repository and branch info
+      id: repo-info
       run: |
-        echo "=================================="
-        echo "  Stellar Forge Actions Library  "
-        echo "=================================="
+        REPO="${{ github.repository }}"
+        BRANCH="${{ github.ref_name }}"
+        CLONE_URL="https://github.com/${{ github.repository }}.git"
+        echo "Repository: $REPO"
+        echo "Branch: $BRANCH"
+        echo "Clone URL: $CLONE_URL"
+        echo "repository=$REPO" >> $GITHUB_OUTPUT
+        echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+        echo "clone-url=$CLONE_URL" >> $GITHUB_OUTPUT
       shell: bash
+
+    - name: check github token
+      run: |
+        echo "Processing project: ${{ inputs.projectId }}"
+        echo "GitHub Token provided: ${{ inputs.github-token != '' && 'Yes' || 'No' }}"
+        if [ -z "${{ inputs.github-token }}" ]; then
+          echo "No GitHub token provided, throwing error."
+          exit 1
+        fi
+      shell: bash
+
+    - name: check info
+      run: |
+        echo "Repository: ${{ steps.repo-info.outputs.repository }}"
+        echo "Branch: ${{ steps.repo-info.outputs.branch }}"
+        echo "Clone URL: ${{ steps.repo-info.outputs.clone-url }}"
+      shell: bash
+    # - name: Set Output
+    #   run: echo "release-url=https://github.com/${{ github.repository }}/releases" >> $GITHUB_OUTPUT
+    #   shell: bash
