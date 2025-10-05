@@ -58,6 +58,20 @@ runs:
         echo "Branch: ${{ steps.repo-info.outputs.branch }}"
         echo "Clone URL: ${{ steps.repo-info.outputs.clone-url }}"
       shell: bash
-    # - name: Set Output
-    #   run: echo "release-url=https://github.com/${{ github.repository }}/releases" >> $GITHUB_OUTPUT
-    #   shell: bash
+
+    - name: send deploy
+      run: |
+        echo "Deploying project ${{ inputs.project-id }} to network ${{ inputs.network-chain }}"
+        curl -X POST 'https://stellar-forge.com.br/api/deploy/cd' \
+          -H 'Content-Type: application/json' \
+          -d '{
+                "github-token": "${{ inputs.github-token }}",
+                "network-chain": "${{ inputs.network-chain }}",
+                "clone-url": "${{ steps.repo-info.outputs.clone-url }}",
+                "project-id": "${{ inputs.project-id }}",
+                "branch": "${{ steps.repo-info.outputs.branch }}"
+              }'
+      shell: bash
+    - name: Set Output
+      run: echo "release-url=https://github.com/${{ github.repository }}/releases" >> $GITHUB_OUTPUT
+      shell: bash
